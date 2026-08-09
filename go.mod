@@ -1,3 +1,3 @@
-module github.com/ztjd/gopher
+module github.com/chenstar1025/gopher
 
 go 1.22

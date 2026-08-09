@@ -360,7 +360,7 @@ $ gopher run "修复 main.go 的 bug"
 
 - **形态**：单文件原生二进制
 - **平台**：Windows (amd64)、Linux (amd64)、macOS (amd64 + arm64)
-- **获取方式**：`go install github.com/ztjd/gopher@latest` 或 GitHub Releases 下载预编译二进制
+- **获取方式**：`go install github.com/chenstar1025/gopher@latest` 或 GitHub Releases 下载预编译二进制
 - **Key 配置**：首次运行自动弹出配置向导
 - **已知限制**：凭据管理器当前仅支持 Windows（`wincred`），macOS / Linux 使用明文配置文件作为降级方案（标有明确风险警告）。Linux 后续版本接入 `libsecret`。
 

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gopher/gopher/internal/tools"
+	"github.com/chenstar1025/gopher/internal/tools"
 )
 
 // DefaultConfirmTimeout bounds how long Confirm waits for a human answer

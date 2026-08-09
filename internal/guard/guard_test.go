@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ztjd/gopher/internal/tools"
+	"github.com/chenstar1025/gopher/internal/tools"
 )
 
 // runShell builds a run_shell tool call carrying a command argument.

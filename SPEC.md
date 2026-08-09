@@ -153,7 +153,7 @@ func (g *Guardrail) Check(action ToolCall) (Blocked bool, Reason string)
 - 若用户输入 `yes` → 放行
 - 若用户输入 `no` 或 60s 超时 → 拒绝执行
 
-**白名单**：用户可通过配置文件将特定命令加入白名单。
+**白名单**：用户可通过配置文件将特定命令加入白名单。匹配规则为**前缀匹配**（白名单 `git` 则所有 `git` 命令放行，包括 `git push --force`）。
 
 ### 3.7 记忆系统 (`internal/memory`)
 
@@ -283,7 +283,7 @@ type Message struct {
 type ToolCall struct {
     ID       string
     Name     string
-    Args     map[string]any
+    Args     map[string]any // key 约定：read_file/write_file 用 "path"；run_shell 用 "command"
 }
 
 type ToolResult struct {
@@ -360,7 +360,7 @@ $ gopher run "修复 main.go 的 bug"
 
 - **形态**：单文件原生二进制
 - **平台**：Windows (amd64)、Linux (amd64)、macOS (amd64 + arm64)
-- **获取方式**：`go install github.com/<user>/gopher@latest` 或 GitHub Releases 下载预编译二进制
+- **获取方式**：`go install github.com/ztjd/gopher@latest` 或 GitHub Releases 下载预编译二进制
 - **Key 配置**：首次运行自动弹出配置向导
 - **已知限制**：凭据管理器当前仅支持 Windows（`wincred`），macOS / Linux 使用明文配置文件作为降级方案（标有明确风险警告）。Linux 后续版本接入 `libsecret`。
 
@@ -372,7 +372,7 @@ $ gopher run "修复 main.go 的 bug"
 
 | 类别 | 选择 | 理由 |
 |------|------|------|
-| 语言 | Go | 单文件编译分发、内置测试框架、CLI 库成熟、跨平台 |
+| 语言 | Go 1.22+ | 单文件编译分发、内置测试框架、CLI 库成熟、跨平台 |
 | LLM SDK | 自写 HTTP 客户端 + `encoding/json` | OpenAI 兼容 API 足够简单，不引入重量级 SDK |
 | 凭据存储 | `github.com/danieljoos/wincred` | Windows Credential Manager 的 Go 绑定 |
 | CLI 框架 | 标准库 `flag` + 手写命令路由 | 依赖最少，编译快 |

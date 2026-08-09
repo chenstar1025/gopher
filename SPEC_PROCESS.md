@@ -113,4 +113,63 @@
 
 ---
 
-*记录时间：2026-08-09，brainstorming 阶段完成。*
+## 6. 冷启动验证记录
+
+**时间：** 2026-08-10
+
+**验证 agent：** Claude Code subagent（全新会话，无任何对话历史，仅提供 SPEC.md + PLAN.md 全文）
+
+**指定任务：** PLAN T06（治理护栏）
+
+### 6.1 执行过程
+
+Subagent 收到 SPEC + PLAN 后，自主完成了以下步骤：
+1. 下载 Go 1.24.4 工具链（本机未安装）
+2. 初始化 Go module（`github.com/gopher/gopher`）
+3. 创建 `internal/tools/tool.go`（因为 T06 依赖 T03 的 `ToolCall` 类型）
+4. 编写 `internal/guard/guard_test.go`（11 个测试用例）——**红色阶段**
+5. 实现 `internal/guard/patterns.go` + `internal/guard/guard.go` ——**绿色阶段**
+6. 运行 `go test`、`go vet`、`go build`、`gofmt` 全部通过
+
+### 6.2 Agent 提问与暂停
+
+Agent 在执行中主动提出了以下问题：
+
+> **关于 Module path：** SPEC 使用占位符 `github.com/<user>/gopher`，但 `<`/`>` 是 Go module path 的非法字符。Agent 自行使用了 `github.com/gopher/gopher`，并在最终报告中标注"Replace with the real GitHub username before publishing"。
+
+> **关于 `run_shell` 参数 key：** SPEC 未定义 shell 命令的参数键名。Agent 兼容了 `command`/`cmd`/`script`/`shell`/`input` 五种可能的键名，并对于 `run_shell` 工具回退为拼接所有字符串参数。
+
+> **关于白名单语义：** SPEC 说"可通过配置文件将特定命令加入白名单"，但未说明匹配规则。Agent 选择了前缀匹配（whitelist `rm` 则所有 `rm` 命令都放行），并在报告中请求确认。
+
+### 6.3 暴露的 SPEC 缺陷
+
+| # | 缺陷 | 严重程度 |
+|---|------|----------|
+| 1 | Module path 使用占位符 `<user>`，在 Go 中非法 | 中 |
+| 2 | `ToolCall.Args` 的参数键名未定义（`command`？`cmd`？`path`？） | **高** |
+| 3 | 白名单匹配语义未明确（精确匹配 / 前缀匹配 / 正则？） | 中 |
+| 4 | Go 版本未指定（Agent 默认选 1.22 → 实际下载了 1.24.4） | 低 |
+
+### 6.4 产出质量评估
+
+Agent 产出的代码：
+- **正确性：** 11/11 测试通过，`go vet` 零告警
+- **完整性：** 覆盖了 SPEC §3.6 列出的全部 9 类危险命令
+- **安全性：** 严格模式匹配，无遗漏、无假阴性
+- **与 SPEC 预期的一致性：** 基本一致，偏差仅来源于 SPEC 未定义的部分
+
+### 6.5 据此对 SPEC/PLAN 的修订
+
+**SPEC 修订（修订前后 diff）：**
+
+1. §8.1 技术选型：Module path 从 `github.com/<user>/gopher` → `github.com/ztjd/gopher`（使用我的实际 GitHub 用户名）
+2. §6.2 数据模型：`ToolCall.Args` 补充参数键名约定（`path` 用于文件工具，`command` 用于 run_shell）
+3. §3.6 治理护栏：白名单语义补充为"前缀匹配"
+4. §8.1 新增 Go 版本要求：`go 1.22+`
+
+**PLAN 修订：**
+- T03（工具系统）实现要点新增：`run_shell` 的参数键为 `command`
+
+---
+
+*记录时间：2026-08-10，冷启动验证完成。*

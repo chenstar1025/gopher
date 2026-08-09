@@ -40,3 +40,4 @@ credentials.json
 
 # Build artifacts
 dist/
+internal/loop/main.go

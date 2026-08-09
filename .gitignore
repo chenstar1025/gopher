@@ -1,0 +1,39 @@
+# Binaries
+/gopher
+/gopher.exe
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output of go coverage
+*.out
+coverage.html
+
+# Dependency directories
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Gopher runtime
+.gopher/
+
+# Secrets & credentials
+.env
+*.pem
+*.key
+credentials.json
+
+# Build artifacts
+dist/

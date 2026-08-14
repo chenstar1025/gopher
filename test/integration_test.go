@@ -167,7 +167,7 @@ func TestIntegration_FeedbackLoopDrivesCorrection(t *testing.T) {
 			{
 				ToolCalls: []llm.ToolCall{{
 					ID: "1", Name: "run_test",
-					Args: llm.ArgsJSON(map[string]string{"pkg": "./..."}),
+					Args: llm.ArgsJSON(map[string]string{"pkg": "nonexistent"}),
 				}},
 				FinishReason: "tool_calls",
 			},
@@ -186,7 +186,7 @@ func TestIntegration_FeedbackLoopDrivesCorrection(t *testing.T) {
 			{
 				ToolCalls: []llm.ToolCall{{
 					ID: "3", Name: "run_test",
-					Args: llm.ArgsJSON(map[string]string{"pkg": "./..."}),
+					Args: llm.ArgsJSON(map[string]string{"pkg": "nonexistent"}),
 				}},
 				FinishReason: "tool_calls",
 			},

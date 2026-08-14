@@ -97,7 +97,7 @@ func TestLoop_MultipleRounds(t *testing.T) {
 		Responses: []llm.Response{
 			{ToolCalls: []llm.ToolCall{{ID: "1", Name: "read_file", Args: llm.ArgsJSON(map[string]string{"path": dir + "/main.go"})}}, FinishReason: "tool_calls"},
 			{ToolCalls: []llm.ToolCall{{ID: "2", Name: "write_file", Args: llm.ArgsJSON(map[string]string{"path": dir + "/main.go", "content": "fixed"})}}, FinishReason: "tool_calls"},
-			{ToolCalls: []llm.ToolCall{{ID: "3", Name: "run_test", Args: nil}}, FinishReason: "tool_calls"},
+			{ToolCalls: []llm.ToolCall{{ID: "3", Name: "run_test", Args: llm.ArgsJSON(map[string]string{"pkg": "nonexistent"})}}, FinishReason: "tool_calls"},
 			{Messages: []llm.Message{llm.AssistantMsg("fixed!")}, FinishReason: "stop"},
 		},
 	}
@@ -188,7 +188,7 @@ func TestLoop_FeedbackInjectionOnTestFailure(t *testing.T) {
 	script := llm.Script{
 		Responses: []llm.Response{
 			{
-				ToolCalls:    []llm.ToolCall{{ID: "1", Name: "run_test", Args: nil}},
+				ToolCalls:    []llm.ToolCall{{ID: "1", Name: "run_test", Args: llm.ArgsJSON(map[string]string{"pkg": "nonexistent"})}},
 				FinishReason: "tool_calls",
 			},
 			{
@@ -199,7 +199,7 @@ func TestLoop_FeedbackInjectionOnTestFailure(t *testing.T) {
 				FinishReason: "tool_calls",
 			},
 			{
-				ToolCalls:    []llm.ToolCall{{ID: "3", Name: "run_test", Args: nil}},
+				ToolCalls:    []llm.ToolCall{{ID: "3", Name: "run_test", Args: llm.ArgsJSON(map[string]string{"pkg": "nonexistent"})}},
 				FinishReason: "tool_calls",
 			},
 			{Messages: []llm.Message{llm.AssistantMsg("all good now")}, FinishReason: "stop"},

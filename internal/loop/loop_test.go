@@ -92,10 +92,11 @@ func TestLoop_ExecutesToolCalls(t *testing.T) {
 }
 
 func TestLoop_MultipleRounds(t *testing.T) {
+	dir := t.TempDir()
 	script := llm.Script{
 		Responses: []llm.Response{
-			{ToolCalls: []llm.ToolCall{{ID: "1", Name: "read_file", Args: llm.ArgsJSON(map[string]string{"path": "main.go"})}}, FinishReason: "tool_calls"},
-			{ToolCalls: []llm.ToolCall{{ID: "2", Name: "write_file", Args: llm.ArgsJSON(map[string]string{"path": "main.go", "content": "fixed"})}}, FinishReason: "tool_calls"},
+			{ToolCalls: []llm.ToolCall{{ID: "1", Name: "read_file", Args: llm.ArgsJSON(map[string]string{"path": dir + "/main.go"})}}, FinishReason: "tool_calls"},
+			{ToolCalls: []llm.ToolCall{{ID: "2", Name: "write_file", Args: llm.ArgsJSON(map[string]string{"path": dir + "/main.go", "content": "fixed"})}}, FinishReason: "tool_calls"},
 			{ToolCalls: []llm.ToolCall{{ID: "3", Name: "run_test", Args: nil}}, FinishReason: "tool_calls"},
 			{Messages: []llm.Message{llm.AssistantMsg("fixed!")}, FinishReason: "stop"},
 		},
@@ -183,6 +184,7 @@ func TestLoop_GuardBlocksDangerousCommand(t *testing.T) {
 }
 
 func TestLoop_FeedbackInjectionOnTestFailure(t *testing.T) {
+	dir := t.TempDir()
 	script := llm.Script{
 		Responses: []llm.Response{
 			{
@@ -192,7 +194,7 @@ func TestLoop_FeedbackInjectionOnTestFailure(t *testing.T) {
 			{
 				ToolCalls: []llm.ToolCall{{
 					ID: "2", Name: "write_file",
-					Args: llm.ArgsJSON(map[string]string{"path": "main.go", "content": "fixed"}),
+					Args: llm.ArgsJSON(map[string]string{"path": dir + "/main.go", "content": "fixed"}),
 				}},
 				FinishReason: "tool_calls",
 			},

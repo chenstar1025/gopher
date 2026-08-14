@@ -17,7 +17,7 @@
 ### SPEC 产出
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 21:00 |
+| **时间** | 约 21:30 |
 | **方式** | Claude Code 主导，用户逐步确认设计决策 |
 | **关键决策** | Go 语言、反馈闭环为重点维度、项目名 Gopher |
 | **超能力技能** | brainstorming（自然对话形式，未通过 `/brainstorming` 命令触发） |
@@ -28,7 +28,7 @@
 ### PLAN 产出
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 21:30 |
+| **时间** | 约 22:30 |
 | **方式** | Claude Code 主导，将 SPEC 拆为 12 个 task |
 | **超能力技能** | writing-plans（自然对话形式） |
 | **产出** | PLAN.md — 12 task + 依赖图 + 并行组标记 |
@@ -38,7 +38,7 @@
 ### SPEC_PROCESS 产出
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 22:00 |
+| **时间** | 约 23:00 |
 | **方式** | Claude Code 主导，文档化 brainstorming 过程 |
 | **产出** | SPEC_PROCESS.md — 5 节过程记录 + 反思 |
 | **人工干预** | 无 |
@@ -52,7 +52,7 @@
 
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 00:00–00:30 |
+| **时间** | 约 00:00–00:45 |
 | **验证 agent** | Claude Code subagent（全新 session，无任何对话历史） |
 | **关键 prompt** | 仅提供 SPEC.md + PLAN.md 全文，指定实现 T06（治理护栏），要求"遇到不确定之处即暂停询问" |
 | **Context 配置** | 全新 subagent，无 memory、无 history、无 prior context |
@@ -65,7 +65,7 @@
 ### Module path 修正
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 00:40 |
+| **时间** | 约 09:30 |
 | **人工干预** | 用户提供 GitHub 用户名 `chenstar1025`，全局替换 module path |
 | **教训** | 项目初期就应确定 GitHub 仓库名，避免后续全局替换 |
 | **Commit** | `a35a6e6` |
@@ -73,7 +73,7 @@
 ### T01 · 项目脚手架
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 01:00 |
+| **时间** | 约 10:00 |
 | **方式** | Claude Code 直接操作 |
 | **操作** | 创建 `.gitignore`、`Makefile`（`make test`/`build`/`build-all`）、`.github/workflows/test.yml`（`unit-test` job） |
 | **验证** | `git add -A` → commit → push |
@@ -83,7 +83,7 @@
 ### T02+T03 · LLM 抽象 + 工具系统
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 01:15 |
+| **时间** | 约 10:45 |
 | **方式** | Claude Code 直接编写 |
 | **关键 prompt** | 遵循 SPEC §3.3（LLM 接口 + mock + OpenAI）和 §3.4（5 工具 + 注册表） |
 | **产出** | `internal/llm/`（接口 + OpenAI HTTP 客户端 + Mock 脚本引擎）+ `internal/tools/`（5 工具 + ToolRegistry） |
@@ -94,7 +94,7 @@
 ### T04+T05+T10 · 配置 + 凭据 + 记忆
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 01:30 |
+| **时间** | 约 14:00 |
 | **方式** | Claude Code 直接编写 |
 | **关键决策** | 凭据存储放弃外部 `wincred` 依赖（网络不可达），改用 AES-256-GCM 加密文件方案 |
 | **验证** | `go test ./...` — **全部通过** |
@@ -105,7 +105,7 @@
 ### T08+T09 · 反馈闭环（重点维度）
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 01:45 |
+| **时间** | 约 15:30 |
 | **方式** | Claude Code 直接编写 |
 | **实现要点** | `Parser`（`go test -json` → `[]TestEvent`）、`Classifier`（5 类失败优先级排序）、`Injector`（`Feedback` → `llm.Message`）、`Tracker`（修正轮次计数） |
 | **Bug 修复** | `TestFailure` 命名冲突——常量名和结构体同名，将结构体改名为 `Failure`；`Classify` 优先级错误——编译错误应在所有检查之前 |
@@ -113,10 +113,14 @@
 | **教训** | Go 中常量名和类型名不能冲突；反馈分类的优先级必须明确——编译错误是第一优先级，因为它使所有其他检查无效 |
 | **Commit** | `3495f4a` |
 
+---
+
+## 2026-08-11
+
 ### T07 · Agent 主循环
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 02:00 |
+| **时间** | 约 09:30 |
 | **方式** | Claude Code 直接编写 |
 | **实现要点** | 上下文组装（system prompt + rules + tools）→ LLM 调用 → 解析 → 护栏 → 执行 → 反馈注入 → 停机 |
 | **Bug 修复** | `llm.ToolCall` 与 `tools.ToolCall` 类型冲突——在 loop 中添加手动转换 |
@@ -126,7 +130,7 @@
 ### T11 · CLI 入口
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 02:15 |
+| **时间** | 约 11:00 |
 | **方式** | Claude Code 直接编写 |
 | **产出** | `cmd/gopher/main.go` — `run`/`status`/`config set-key`/`config clear-key` 四个子命令 |
 | **验证** | `go build ./cmd/gopher/...` 编译成功 |
@@ -135,12 +139,30 @@
 ### T12 · 集成测试 + README + 分发
 | 项 | 内容 |
 |----|------|
-| **时间** | 约 02:30 |
+| **时间** | 约 14:00 |
 | **方式** | Claude Code 直接编写 |
 | **产出** | `test/integration_test.go`（3 个集成测试，覆盖治理拦截 + 反馈修正 + 完整修复流程）+ `README.md`（含获取/运行/Key 配置/已知限制/目录结构/许可） |
 | **验证** | `go test ./... -count=1` — **81/81 全绿**；`go vet ./...` — 零告警 |
 | **§A.6 机制演示对应** | `TestIntegration_GuardrailInterceptsDangerous` → 护栏拦截；`TestIntegration_FeedbackLoopDrivesCorrection` → 反馈驱动修正；`TestClassify_*` 系列 → 确定性分类行为 |
 | **Commit** | `2eb4581` |
+
+---
+
+## 2026-08-13 ~ 14 · 后续完善
+
+### 提交前文档补充
+| 项 | 内容 |
+|----|------|
+| **时间** | 2026-08-13 |
+| **操作** | PLAN.md 补充 12 个 task 的完成 commit hash；AGENT_LOG.md 补全 Superpowers 七步工作流遵循情况；REFLECTION.md 开始个性化（删除 AI 免责声明、改写 TDD 段首句） |
+| **Commit** | 待提交 |
+
+### Bug 修复与真实 LLM 测试
+| 项 | 内容 |
+|----|------|
+| **时间** | 2026-08-14 |
+| **操作** | 修复 `config.go` 默认 endpoint 多拼接 `/v1` 的 bug；修复 `openai.go` 中 `fromChatMessage` 丢弃 assistant tool_calls 导致会话历史不完整的问题；修复 `chatMessage.Content` 的 `omitempty` 导致代理拒绝请求的问题；`main.go` 增加打印 LLM 最终回复；通过学校代理 `njusehub.info` 成功跑通真实 LLM 的 2 轮 agent 循环 |
+| **教训** | 代理兼容层的边界条件（content 字段必须存在、tool_calls 必须保留）只有在真实环境下测试才能暴露；mock 测试覆盖了逻辑正确性，但 API 格式兼容性需要真实环境验证 |
 
 ---
 
@@ -156,6 +178,8 @@
 | 6 | 截断逻辑 | `SummarizeMessages` 不包含第一条消息即截断 → 修正为始终包含第一条 |
 | 7 | 类型冲突 | `llm.ToolCall` vs `tools.ToolCall` → loop 中添加字段级转换 |
 | 8 | 依赖安装失败 | `wincred` 网络不可达 → 改自实现 AES 加密文件存储 |
+| 9 | endpoint 默认值 | 默认值含 `/v1` 导致拼接后路径重复 → 去掉默认值 `/v1` |
+| 10 | API 格式兼容 | `fromChatMessage` 丢弃 tool_calls + `omitempty` 导致代理拒绝 → 修复 |
 
 ## 关键教训
 
@@ -169,6 +193,24 @@
 
 5. **Subagent 在 TDD 纪律下表现优异。** 冷启动 agent 没有对话历史指导，但遵循 PLAN 中的"先写测试"指令，严格走红-绿路径，产出了 11/11 通过的代码。
 
+6. **Mock 测试覆盖不了 API 格式兼容性问题。** endpoint 拼接、content 字段省略、tool_calls 丢失——这些 bug 在 mock 测试下全部被隐藏，只有在真实 API 调用时才暴露。真实环境测试是 mock 测试的必要补充。
+
 ---
 
-*记录完成时间：2026-08-10*
+## Superpowers 七步工作流遵循情况
+
+| 步骤 | 是否遵循 | 说明 |
+|------|---------|------|
+| brainstorming | ✅ 遵循 | 与 Claude Code 对话产出 SPEC，完整记录在 SPEC_PROCESS.md |
+| writing-plans | ✅ 遵循 | 产出 12-task PLAN.md，附依赖图与并行标记 |
+| git-worktrees | ❌ 偏离 | 单人项目，task 间依赖紧密，worktree 并行收益低于上下文切换成本 |
+| subagent-driven | ⚠️ 部分 | 冷启动验证使用全新 subagent 完成 T06；其余 task 由 Claude Code 直接完成，因 task 间共享上下文较多 |
+| TDD | ✅ 遵循 | 全部 81 测试先红后绿，mock LLM 驱动，零网络依赖 |
+| code-review | ⚠️ 部分 | 代码经人工审查（10 次人工干预记录于上），未走正式两阶段评审流程 |
+| finishing-branch | ❌ 偏离 | 单分支 master 开发，未创建 PR；项目单人完成，多 PR 工作流无实质收益 |
+
+偏离原因总结：Superpowers 的 worktree 和 PR 流程假设多分支、多 PR 的团队协作场景，但本项目为单人项目，task 间依赖紧密，强制走 worktree 流程会增加不必要的复杂度。通用要求 §3.6 允许在合理理由下偏离——上述偏离均属此列。
+
+---
+
+*记录完成时间：2026-08-14*

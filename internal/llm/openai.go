@@ -38,7 +38,7 @@ type chatRequest struct {
 
 type chatMessage struct {
 	Role       string     `json:"role"`
-	Content    string     `json:"content,omitempty"`
+	Content    string     `json:"content"`
 	ToolCalls  []chatToolCall `json:"tool_calls,omitempty"`
 	ToolCallID string     `json:"tool_call_id,omitempty"`
 }
@@ -199,8 +199,20 @@ func toChatTools(tools []ToolDef) []chatTool {
 }
 
 func fromChatMessage(cm chatMessage) Message {
-	return Message{
+	m := Message{
 		Role:    cm.Role,
 		Content: cm.Content,
 	}
+	for _, tc := range cm.ToolCalls {
+		args := map[string]any{}
+		if err := json.Unmarshal([]byte(tc.Function.Arguments), &args); err != nil {
+			args = map[string]any{"raw": tc.Function.Arguments}
+		}
+		m.ToolCalls = append(m.ToolCalls, ToolCall{
+			ID:   tc.ID,
+			Name: tc.Function.Name,
+			Args: args,
+		})
+	}
+	return m
 }

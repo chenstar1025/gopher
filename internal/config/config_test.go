@@ -8,7 +8,7 @@ import (
 
 func TestDefaults(t *testing.T) {
 	cfg := Defaults()
-	if cfg.LLMEndpoint != "https://api.openai.com/v1" {
+	if cfg.LLMEndpoint != "https://api.openai.com" {
 		t.Errorf("unexpected endpoint: %s", cfg.LLMEndpoint)
 	}
 	if cfg.LLMModel != "gpt-4o" {

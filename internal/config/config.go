@@ -19,7 +19,7 @@ type Config struct {
 // Defaults returns a Config populated with safe defaults.
 func Defaults() Config {
 	return Config{
-		LLMEndpoint:   "https://api.openai.com/v1",
+		LLMEndpoint:   "https://api.openai.com",
 		LLMModel:      "gpt-4o",
 		MaxRounds:     50,
 		MaxRetries:    3,

@@ -324,7 +324,7 @@ type Session struct {
 ### 6.5 配置
 ```go
 type Config struct {
-    LLMEndpoint   string // LLM API 端点，默认 https://api.openai.com/v1
+    LLMEndpoint   string // LLM API 端点（base URL，不带 /v1），默认 https://api.openai.com
     LLMModel      string // 模型名，默认 gpt-4o
     MaxRounds     int    // 最大轮次，默认 50
     MaxRetries    int    // 反馈修正最大轮数，默认 3
@@ -464,4 +464,4 @@ $ gopher run "修复 main.go 的 bug"
 
 ---
 
-*本文档由 brainstorming 过程沉淀，后续如有修订将在 SPEC_PROCESS.md 中记录。*
+*本文档后续如有修订将在 SPEC_PROCESS.md 中记录。*

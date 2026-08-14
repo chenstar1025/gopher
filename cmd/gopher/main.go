@@ -89,6 +89,14 @@ func runCmd() {
 	}
 	if sess != nil {
 		fmt.Printf("Session %s finished: %s (%d rounds)\n", sess.ID, sess.Status, sess.Round)
+		// Print the last assistant response
+		for i := len(sess.Messages) - 1; i >= 0; i-- {
+			if sess.Messages[i].Role == "assistant" && sess.Messages[i].Content != "" {
+				fmt.Println()
+				fmt.Println(sess.Messages[i].Content)
+				break
+			}
+		}
 	}
 }
 
